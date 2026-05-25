@@ -1,4 +1,5 @@
 import sqlite3
+import time
 
 from fastapi import FastAPI, HTTPException, status
 from pydantic import BaseModel, EmailStr, Field
@@ -12,7 +13,7 @@ from .database import (
     update_user_record,
 )
 
-app = FastAPI(title="User CRUD API", version="1.0.0")
+app = FastAPI(title="Drill User CRUD API", version="1.0.0")
 
 
 class UserBase(BaseModel):
@@ -32,8 +33,11 @@ class UserUpdate(BaseModel):
 class User(UserBase):
     id: int
 
-
-init_db()
+@app.middleware("http")
+async def drill_blocking_middleware(request, call_next):
+    # Intentional bug: blocks event loop in async request flow.
+    time.sleep(5)
+    return await call_next(request)
 
 
 @app.get("/health")
