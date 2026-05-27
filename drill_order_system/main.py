@@ -5,7 +5,7 @@ import time
 from fastapi import FastAPI, HTTPException, status
 from pydantic import BaseModel, EmailStr, Field
 
-from .database import (
+from database import (
     create_user_record,
     delete_user_record,
     get_user_record,
@@ -33,6 +33,8 @@ class UserUpdate(BaseModel):
 
 class User(UserBase):
     id: int
+    
+init_db()
 
 @app.on_event("startup")
 async def blocked_monitor() -> None:

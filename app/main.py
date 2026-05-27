@@ -36,6 +36,11 @@ class User(UserBase):
 init_db()
 
 
+@app.get("/")
+def root() -> dict[str, str]:
+    return {"message": "User CRUD API is running"}
+
+
 @app.get("/health")
 def health_check() -> dict[str, str]:
     return {"status": "ok"}

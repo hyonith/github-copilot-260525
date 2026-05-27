@@ -1,6 +1,6 @@
 import sqlite3
 
-from .config import build_dsn
+from config import build_dsn
 
 
 def get_connection() -> sqlite3.Connection:
