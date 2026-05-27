@@ -1,6 +1,7 @@
 import asyncio
 import sqlite3
 import time
+from fastapi.concurrency import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException, status
 from pydantic import BaseModel, EmailStr, Field
@@ -13,9 +14,6 @@ from database import (
     list_user_records,
     update_user_record,
 )
-
-app = FastAPI(title="Drill User CRUD API", version="1.0.0")
-
 
 class UserBase(BaseModel):
     name: str = Field(..., min_length=1, max_length=100)
@@ -34,20 +32,21 @@ class UserUpdate(BaseModel):
 class User(UserBase):
     id: int
     
-init_db()
-
-@app.on_event("startup")
-async def blocked_monitor() -> None:
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     print("\\n⏳ [系統監控] 正在檢查背景連線狀態...")  
 
     # 錯誤根源：在 async def 中誤用同步阻塞的 time.sleep(8)。
     # 錯誤影響：系統啟動時立刻凍結整個非同步事件循環，
     # 導致所有非同步任務完全停止回應，如同當機。
     time.sleep(8)
-          
-    print("✅ [系統監控] 背景狀態檢查完成。")  
+    
+    init_db()
     await asyncio.sleep(1)
+    print("✅ [系統監控] 背景狀態檢查完成。")  
+    yield
 
+app = FastAPI(lifespan=lifespan, title="Drill User CRUD API", version="1.0.0")
 
 @app.get("/health")
 def health_check() -> dict[str, str]:
@@ -111,3 +110,9 @@ def delete_user(user_id: int) -> None:
     if not deleted:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     return None
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
