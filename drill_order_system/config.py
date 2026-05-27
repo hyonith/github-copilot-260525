@@ -1,10 +1,15 @@
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent
-DB_PATH = BASE_DIR / "user.db"
+
+# 刻意埋入的錯誤：CONFIG 中未定義 SQLITE_PATH。
+CONFIG = {
+    "DB_TIMEOUT": 30,
+    "DB_ECHO": False,
+}
 
 
-def get_db_path() -> Path:
-	# Intentional bug: missing SQLITE_PATH causes runtime KeyError.
-	cfg = {"DB_TIMEOUT": 30}
-	return Path(cfg["SQLITE_PATH"])
+def build_dsn() -> str:
+    # 錯誤根源：CONFIG 中不含 "SQLITE_PATH"，執行時會立刻拋出 KeyError。
+    db_path = CONFIG["SQLITE_PATH"]
+    return f"sqlite:///{db_path}"

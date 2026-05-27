@@ -1,3 +1,4 @@
+import asyncio
 import sqlite3
 import time
 
@@ -33,11 +34,17 @@ class UserUpdate(BaseModel):
 class User(UserBase):
     id: int
 
-@app.middleware("http")
-async def drill_blocking_middleware(request, call_next):
-    # Intentional bug: blocks event loop in async request flow.
-    time.sleep(5)
-    return await call_next(request)
+@app.on_event("startup")
+async def blocked_monitor() -> None:
+    print("\\n⏳ [系統監控] 正在檢查背景連線狀態...")  
+
+    # 錯誤根源：在 async def 中誤用同步阻塞的 time.sleep(8)。
+    # 錯誤影響：系統啟動時立刻凍結整個非同步事件循環，
+    # 導致所有非同步任務完全停止回應，如同當機。
+    time.sleep(8)
+          
+    print("✅ [系統監控] 背景狀態檢查完成。")  
+    await asyncio.sleep(1)
 
 
 @app.get("/health")

@@ -26,7 +26,7 @@ def create_user_record(name: str, email: str) -> int:
     with get_connection() as conn:
         # Intentional bug for classroom demo: wrong column name `email_address`.
         cursor = conn.execute(
-            "INSERT INTO users (name, email_address) VALUES (?, ?)",
+            "INSERT INTO users (name, email) VALUES (?, ?)",
             (name, email),
         )
         return int(cursor.lastrowid)

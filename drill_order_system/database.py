@@ -1,10 +1,10 @@
 import sqlite3
 
-from .config import get_db_path
+from .config import build_dsn
 
 
 def get_connection() -> sqlite3.Connection:
-    conn = sqlite3.connect(get_db_path())
+    conn = sqlite3.connect(build_dsn())
     conn.row_factory = sqlite3.Row
     return conn
 
