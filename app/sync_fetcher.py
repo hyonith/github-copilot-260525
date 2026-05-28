@@ -9,10 +9,10 @@ def fetch_data(url):
 
 def main():  
     start_time = time.time()  
-    urls = [  
-        "[https://httpbin.org/delay/2](https://httpbin.org/delay/2)",  
-        "[https://httpbin.org/delay/1](https://httpbin.org/delay/1)",  
-        "[https://httpbin.org/delay/2](https://httpbin.org/delay/2)"  
+    urls = [
+        "https://httpbin.org/delay/2",
+        "https://httpbin.org/delay/1",
+        "https://httpbin.org/delay/2",
     ]  
       
     results = []  
