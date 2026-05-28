@@ -1,6 +1,6 @@
 from pathlib import Path
 
-BASE_DIR = Path(__file__).resolve().parent
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 # 刻意埋入的錯誤：CONFIG 中未定義 SQLITE_PATH。
 CONFIG = {
@@ -10,6 +10,6 @@ CONFIG = {
 
 
 def build_dsn() -> str:
-    # 錯誤根源：CONFIG 中不含 "SQLITE_PATH"，執行時會立刻拋出 KeyError。
-    db_path = CONFIG["SQLITE_PATH"]
-    return f"sqlite:///{db_path}"
+    print("正在獲取資料庫路徑...")  
+    # str(BASE_DIR / "app/users.db") --- IGNORE ---
+    return str(CONFIG["SQLITE_PATH"])

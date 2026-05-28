@@ -39,7 +39,7 @@ async def lifespan(app: FastAPI):
     # 錯誤根源：在 async def 中誤用同步阻塞的 time.sleep(8)。
     # 錯誤影響：系統啟動時立刻凍結整個非同步事件循環，
     # 導致所有非同步任務完全停止回應，如同當機。
-    time.sleep(8)
+    time.sleep(5)
     
     init_db()
     await asyncio.sleep(1)
