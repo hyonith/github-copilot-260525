@@ -3,7 +3,7 @@ import sqlite3
 from fastapi import FastAPI, HTTPException, status
 from pydantic import BaseModel, EmailStr, Field
 
-from .database import (
+from database import (
     create_user_record,
     delete_user_record,
     get_user_record,
@@ -103,3 +103,9 @@ def delete_user(user_id: int) -> None:
     if not deleted:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     return None
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
